@@ -1,55 +1,135 @@
+import pandas as pd
+import numpy as np
+
+import requests
 import spotipy
-from spotipy.oauth2 import SpotifyOAuth
+from dotenv import load_dotenv
+import os
+
+from spotipy.oauth2 import SpotifyClientCredentials
+from tensorflow.keras.models import load_model
+import joblib
+
+import warnings
+warnings.filterwarnings('ignore')
+
+# Function to get client credentials manager
+
+# Set client credentials
+HOME = os.getcwd()
+# Load environment variables
+load_dotenv(HOME + '/.env')
+print('Env.Variables loaded at ' + HOME + '/.env')
+
+SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
+print(SPOTIFY_CLIENT_ID)
+SPOTIFY_CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
+print(SPOTIFY_CLIENT_SECRET)
+
+client_credentials_manager = SpotifyClientCredentials(
+    client_id=SPOTIFY_CLIENT_ID, client_secret=SPOTIFY_CLIENT_SECRET)
+sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+print('Client credentials manager created')
+
+# Model Loading Part
+# Load the trained model
+model = load_model(
+    '/Users/lucazosso/Desktop/IE_Course/Term_3/Deep_Learning/GP_Project/CV_spotify_reco/music_classifier/music_emotion_classifier.h5')
+print('Model loaded successfully.')
+
+# Load the scaler
+scaler = joblib.load(
+    '/Users/lucazosso/Desktop/IE_Course/Term_3/Deep_Learning/GP_Project/CV_spotify_reco/music_classifier/scaler.joblib')
+print('Scaler loaded successfully.')
+
+label_encoder = joblib.load(
+    '/Users/lucazosso/Desktop/IE_Course/Term_3/Deep_Learning/GP_Project/CV_spotify_reco/music_classifier/label_encoder.joblib')
+
+# Def Fetch only one song
 
 
-def get_song_features(song_id):
-    features = sp.audio_features(song_id)[0]
-    return {
-        'danceability': features['danceability'],
-        'energy': features['energy'],
-        'key': features['key'],
-        'loudness': features['loudness'],
-        'mode': features['mode'],
-        'speechiness': features['speechiness'],
-        'acousticness': features['acousticness'],
-        'instrumentalness': features['instrumentalness'],
-        'liveness': features['liveness'],
-        'valence': features['valence'],
-        'tempo': features['tempo']
-    }
+def fetch_song(song_name):
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+    result = sp.search(song_name)
+    song = result['tracks']['items'][0]
+    return song
 
-# Collect features for the user's saved tracks
-user_song_features = []
-for item in results['items']:
-    track = item['track']
-    song_id = track['id']
-    features = get_song_features(song_id)
-    user_song_features.append(features)
-
-# Create a DataFrame
-user_songs_df = pd.DataFrame(user_song_features)
-print(user_songs_df)
+# Get Song from Playlist
 
 
-
-# Standardize the user's song features
-user_songs_scaled = scaler.transform(user_songs_df)
-
-# Predict emotions
-predicted_emotions = model.predict(user_songs_scaled)
-predicted_emotion_labels = label_encoder.inverse_transform(predicted_emotions.argmax(axis=1))
-
-# Add the predicted emotions to the DataFrame
-user_songs_df['emotion'] = predicted_emotion_labels
-print(user_songs_df)
+def fetch_playlist_songs(playlist_id, limit=100):
+    sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
+    playlist = sp.playlist_tracks(playlist_id, limit=limit)
+    songs = playlist['items']
+    song_ids = []
+    for song in songs:
+        song_ids.append(song['track']['id'])
+    return song_ids
 
 
-#recommend
-def recommend_songs(emotion, n=5):
-    recommended_songs = user_songs_df[user_songs_df['emotion'] == emotion].sample(n)
-    return recommended_songs
+# Get Song Features
+def get_songs_features(ids):
+    meta = sp.track(ids)
+    features = sp.audio_features(ids)
 
-# Example usage
-emotion_detected = 'happy'  # This would be the output from the YOLO model
-recommended_songs = recommend_songs(emotion_detected)
-print(recommended_songs)
+    # meta
+    name = meta['name']
+    album = meta['album']['name']
+    artist = meta['album']['artists'][0]['name']
+    release_date = meta['album']['release_date']
+    length = meta['duration_ms']
+    popularity = meta['popularity']
+    ids = meta['id']
+
+    # features
+    acousticness = features[0]['acousticness']
+    danceability = features[0]['danceability']
+    energy = features[0]['energy']
+    instrumentalness = features[0]['instrumentalness']
+    liveness = features[0]['liveness']
+    valence = features[0]['valence']
+    loudness = features[0]['loudness']
+    speechiness = features[0]['speechiness']
+    tempo = features[0]['tempo']
+    key = features[0]['key']
+    time_signature = features[0]['time_signature']
+
+    track_values = [name, album, artist, ids, release_date, popularity,
+                    length, acousticness, danceability, liveness, loudness, speechiness]
+    columns = ['name', 'album', 'artist', 'ids', 'release_date', 'popularity',
+               'length', 'acousticness', 'danceability', 'liveness', 'loudness', 'speechiness']
+
+    return track_values, columns
+
+# Model Prediction
+
+
+def predict_track_mood(track_id):
+    # Get the features of the song
+    preds = get_songs_features(track_id)
+    # Pre-process the features to input the model
+    preds_features = np.array(preds[0][7:]).reshape(1, -1)
+    # Standardize the input features using the loaded scaler
+    preds_features_scaled = scaler.transform(preds_features)
+    # Predict the emotion
+    preds = model.predict(preds_features_scaled)
+    # Get the predicted class
+    predicted_class = np.argmax(preds, axis=1)
+    # Decode the predicted class back to the label
+    predicted_emotion = label_encoder.inverse_transform(predicted_class)
+
+    # Print predictied emotion
+    print(predicted_emotion[0])
+
+    return predicted_emotion[0]
+
+
+# testing
+if __name__ == '__main__':
+    # song = fetch_song('Happy')
+    # print(song['id'])
+    # #song_features = get_songs_features(song['id'])
+    # #print(predict_track_mood(song['id']))
+
+    playlist_songs_ids = fetch_playlist_songs('37i9dQZF1DXcBWIGoYBM5M')
+    print(playlist_songs_ids)
