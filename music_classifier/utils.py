@@ -16,10 +16,12 @@ warnings.filterwarnings('ignore')
 # Function to get client credentials manager
 
 # Set client credentials
-HOME = os.getcwd()
+# Set base directory
+base_dir = os.path.dirname(os.path.abspath(__file__))
 # Load environment variables
-load_dotenv(HOME + '/.env')
-print('Env.Variables loaded at ' + HOME + '/.env')
+env_path = os.path.join(base_dir, '.env')
+load_dotenv(env_path)
+print('Env.Variables loaded at ' + env_path)
 
 SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
 print(SPOTIFY_CLIENT_ID)
@@ -33,18 +35,18 @@ print('Client credentials manager created')
 
 # Model Loading Part
 # Load the trained model
-model = load_model(
-    '/Users/lucazosso/Desktop/IE_Course/Term_3/Deep_Learning/GP_Project/CV_spotify_reco/music_classifier/music_emotion_classifier.h5')
+model_path = os.path.join(base_dir, 'music_emotion_classifier.h5')
+model = load_model(model_path)
+
 print('Model loaded successfully.')
 
 # Load the scaler
-scaler = joblib.load(
-    '/Users/lucazosso/Desktop/IE_Course/Term_3/Deep_Learning/GP_Project/CV_spotify_reco/music_classifier/scaler.joblib')
+scaler_path = os.path.join(base_dir, 'scaler.joblib')
+scaler = joblib.load(scaler_path)
 print('Scaler loaded successfully.')
 
-label_encoder = joblib.load(
-    '/Users/lucazosso/Desktop/IE_Course/Term_3/Deep_Learning/GP_Project/CV_spotify_reco/music_classifier/label_encoder.joblib')
-
+label_encoder_path = os.path.join(base_dir, 'label_encoder.joblib')
+label_encoder = joblib.load(label_encoder_path)
 # Def Fetch only one song
 
 
