@@ -4,7 +4,7 @@ import pandas as pd
 
 def playlist_track_classifier(playlist_id):
     # Fetch the track IDs from the playlist
-    track_ids = utils2.fetch_playlist_songs(playlist_id, limit=100)
+    track_ids = utils2.fetch_playlist_songs(playlist_id, limit=20)
 
     # Dictionary to hold the results
     results = {}

@@ -1,5 +1,5 @@
 import music_emotions_classifier_app_version as mc
-# from deepface import DeepFace
+from deepface import DeepFace
 import numpy as np
 from PIL import Image
 import streamlit as st
