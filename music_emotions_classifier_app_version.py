@@ -1,11 +1,5 @@
 import music_classifier.utils2 as utils2
 import pandas as pd
-import os
-import sys
-
-current_dir = os.path.dirname(os.path.realpath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
 
 
 def playlist_track_classifier(playlist_id):
