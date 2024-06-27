@@ -1,4 +1,0 @@
-streamlit
-deepface
-numpy
-python-dotenv
