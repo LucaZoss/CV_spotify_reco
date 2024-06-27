@@ -1,4 +1,4 @@
-import utils2 as utils2
+import music_classifier.utils2 as utils2
 import pandas as pd
 
 
