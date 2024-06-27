@@ -73,6 +73,14 @@ def fetch_playlist_songs(playlist_id, limit=100):
 
 
 # Get Song Features
+def fetch_track_preview_url(track_id):
+    track_info = sp.track(track_id)
+    # This is the direct link to the track's 30-second preview
+    preview_url = track_info['preview_url']
+    return preview_url
+
+
+# Get Song Features
 def get_songs_features(ids):
     meta = sp.track(ids)
     features = sp.audio_features(ids)
@@ -85,6 +93,7 @@ def get_songs_features(ids):
     length = meta['duration_ms']
     popularity = meta['popularity']
     ids = meta['id']
+    preview_url = meta['preview_url']
 
     # features
     acousticness = features[0]['acousticness']
@@ -99,9 +108,9 @@ def get_songs_features(ids):
     key = features[0]['key']
     time_signature = features[0]['time_signature']
 
-    track_values = [name, album, artist, ids, release_date, popularity,
+    track_values = [name, album, artist, ids, preview_url, release_date, popularity,
                     length, acousticness, danceability, liveness, loudness, speechiness]
-    columns = ['name', 'album', 'artist', 'ids', 'release_date', 'popularity',
+    columns = ['name', 'album', 'artist', 'ids', 'preview_url', 'release_date', 'popularity',
                'length', 'acousticness', 'danceability', 'liveness', 'loudness', 'speechiness']
 
     return track_values, columns
@@ -113,7 +122,7 @@ def predict_track_mood(track_id):
     # Get the features of the song
     track_values, _ = get_songs_features(track_id)
     # Pre-process the features to input the model
-    preds_features = np.array(track_values[7:]).reshape(1, -1)
+    preds_features = np.array(track_values[8:]).reshape(1, -1)
     # Standardize the input features using the loaded scaler
     preds_features_scaled = scaler.transform(preds_features)
     # Set the model input

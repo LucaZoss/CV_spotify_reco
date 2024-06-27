@@ -69,6 +69,13 @@ def fetch_playlist_songs(playlist_id, limit=100):
     return song_ids
 
 
+def fetch_track_preview_url(track_id):
+    track_info = sp.track(track_id)
+    # This is the direct link to the track's 30-second preview
+    preview_url = track_info['preview_url']
+    return preview_url
+
+
 # Get Song Features
 def get_songs_features(ids):
     meta = sp.track(ids)
@@ -82,6 +89,7 @@ def get_songs_features(ids):
     length = meta['duration_ms']
     popularity = meta['popularity']
     ids = meta['id']
+    preview_url = meta['preview_url']
 
     # features
     acousticness = features[0]['acousticness']
@@ -96,9 +104,9 @@ def get_songs_features(ids):
     key = features[0]['key']
     time_signature = features[0]['time_signature']
 
-    track_values = [name, album, artist, ids, release_date, popularity,
+    track_values = [name, album, artist, ids, preview_url, release_date, popularity,
                     length, acousticness, danceability, liveness, loudness, speechiness]
-    columns = ['name', 'album', 'artist', 'ids', 'release_date', 'popularity',
+    columns = ['name', 'album', 'artist', 'ids', 'preview_url', 'release_date', 'popularity',
                'length', 'acousticness', 'danceability', 'liveness', 'loudness', 'speechiness']
 
     return track_values, columns
@@ -110,7 +118,7 @@ def predict_track_mood(track_id):
     # Get the features of the song
     preds = get_songs_features(track_id)
     # Pre-process the features to input the model
-    preds_features = np.array(preds[0][7:]).reshape(1, -1)
+    preds_features = np.array(preds[0][8:]).reshape(1, -1)
     # Standardize the input features using the loaded scaler
     preds_features_scaled = scaler.transform(preds_features)
     # Predict the emotion
@@ -133,5 +141,25 @@ if __name__ == '__main__':
     # #song_features = get_songs_features(song['id'])
     # #print(predict_track_mood(song['id']))
 
-    playlist_songs_ids = fetch_playlist_songs('37i9dQZF1DXcBWIGoYBM5M')
-    print(playlist_songs_ids)
+    playlist_songs_ids = fetch_playlist_songs('37i9dQZF1DWTJNOeepZTGy')
+    # predict_track_mood(playlist_songs_ids)
+    # Only display the mood
+    preds_mood = []
+    for track_id in playlist_songs_ids:
+        # Get the features of the track
+        track_values, columns = get_songs_features(track_id)
+
+        # Create a dictionary for the track metadata
+        track_meta = dict(zip(columns, track_values))
+
+        # Predict the mood of the track
+        predicted_mood = predict_track_mood(track_id)
+
+        # Add the predicted mood to the track metadata
+        track_meta['predicted_mood'] = predicted_mood
+
+        preds_mood.append(predicted_mood)
+
+    print(np.unique(preds_mood))
+
+    # output = [0 1 2 3]

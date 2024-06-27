@@ -1,10 +1,10 @@
-import music_classifier.utils2 as utils2
+import utils2 as utils2
 import pandas as pd
 
 
 def playlist_track_classifier(playlist_id):
     # Fetch the track IDs from the playlist
-    track_ids = utils2.fetch_playlist_songs(playlist_id, 5)
+    track_ids = utils2.fetch_playlist_songs(playlist_id, limit=100)
 
     # Dictionary to hold the results
     results = {}
@@ -29,9 +29,9 @@ def playlist_track_classifier(playlist_id):
     return results
 
 
-def converter(output_of_cv_model: str):
+def converter(output_of_cv_model: str, playlist_id: str = '37i9dQZF1DXcBWIGoYBM5M'):
     # Simulating the function call to a hypothetical playlist_track_classifier
-    results = playlist_track_classifier('37i9dQZF1DXcBWIGoYBM5M')
+    results = playlist_track_classifier(playlist_id)
 
     label_dict = {
         2: ['happy', 'surprised'],  # "Happy",
@@ -41,24 +41,21 @@ def converter(output_of_cv_model: str):
     }
 
     mood_index = None
-    if output_of_cv_model in label_dict[2]:
-        mood_index = 2
-    elif output_of_cv_model in label_dict[3]:
-        mood_index = 3
-    elif output_of_cv_model in label_dict[0]:
-        mood_index = 0
-    elif output_of_cv_model in label_dict[1]:
-        mood_index = 1
+    for key, values in label_dict.items():
+        if output_of_cv_model in values:
+            mood_index = key
+            break
 
     if mood_index is not None:
-        output = [
-            {
-                "id": track,
-                "name": results[track]['name'],
-                "artist": results[track]['artist'],
-                "album": results[track]['album']
-            } for track in results if results[track]['predicted_mood'] == mood_index
-        ]
+        output = [{
+            "id": track,
+            "name": results[track]['name'],
+            "artist": results[track]['artist'],
+            "album": results[track]['album'],
+            # Including preview_url in the output
+            "preview_url": results[track]['preview_url'],
+            "predicted_mood": results[track]['predicted_mood']
+        } for track in results if results[track]['predicted_mood'] == mood_index]
         return output
     else:
         print("Are you a Zombie Today?")
@@ -67,5 +64,5 @@ def converter(output_of_cv_model: str):
 
 if __name__ == '__main__':
     # Test the function
-    output = converter('happy')
+    output = converter('happy', playlist_id='37i9dQZF1DZ06evO3M0Fbi')
     print(output)
