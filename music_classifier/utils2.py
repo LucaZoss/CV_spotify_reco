@@ -5,7 +5,7 @@ import requests
 import spotipy
 from dotenv import load_dotenv
 import os
-
+import tensorflow as tf
 from spotipy.oauth2 import SpotifyClientCredentials
 from tensorflow.keras.models import load_model
 import joblib
@@ -16,7 +16,6 @@ warnings.filterwarnings('ignore')
 # Function to get client credentials manager
 
 # Set client credentials
-# Set base directory
 base_dir = os.path.dirname(os.path.abspath(__file__))
 # Load environment variables
 env_path = os.path.join(base_dir, '.env')
@@ -34,12 +33,16 @@ sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 print('Client credentials manager created')
 
 # Model Loading Part
-# Load the trained model
-model_path = os.path.join(base_dir, 'music_emotion_classifier.h5')
-model = load_model(model_path)
+# Load the trained TFLite model
+model_tflite_path = os.path.join(base_dir, 'music_emotion_classifier.tflite')
+interpreter = tf.lite.Interpreter(model_path=model_tflite_path)
+interpreter.allocate_tensors()
 
-print('Model loaded successfully.')
+# Get input and output details
+input_details = interpreter.get_input_details()
+output_details = interpreter.get_output_details()
 
+# Load the scaler
 # Load the scaler
 scaler_path = os.path.join(base_dir, 'scaler.joblib')
 scaler = joblib.load(scaler_path)
@@ -69,6 +72,7 @@ def fetch_playlist_songs(playlist_id, limit=100):
     return song_ids
 
 
+# Get Song Features
 def fetch_track_preview_url(track_id):
     track_info = sp.track(track_id)
     # This is the direct link to the track's 30-second preview
@@ -116,50 +120,35 @@ def get_songs_features(ids):
 
 def predict_track_mood(track_id):
     # Get the features of the song
-    preds = get_songs_features(track_id)
+    track_values, _ = get_songs_features(track_id)
     # Pre-process the features to input the model
-    preds_features = np.array(preds[0][8:]).reshape(1, -1)
+    preds_features = np.array(track_values[8:]).reshape(1, -1)
     # Standardize the input features using the loaded scaler
     preds_features_scaled = scaler.transform(preds_features)
-    # Predict the emotion
-    preds = model.predict(preds_features_scaled)
+    # Set the model input
+    interpreter.set_tensor(
+        input_details[0]['index'], preds_features_scaled.astype(np.float32))
+    # Run inference
+    interpreter.invoke()
+    # Get the model output
+    preds = interpreter.get_tensor(output_details[0]['index'])
     # Get the predicted class
     predicted_class = np.argmax(preds, axis=1)
     # Decode the predicted class back to the label
     predicted_emotion = label_encoder.inverse_transform(predicted_class)
 
-    # Print predictied emotion
-    print(predicted_emotion[0])
+    # Print predicted emotion
+    # print(predicted_emotion[0])
 
     return predicted_emotion[0]
 
 
 # testing
 if __name__ == '__main__':
-    # song = fetch_song('Happy')
-    # print(song['id'])
-    # #song_features = get_songs_features(song['id'])
-    # #print(predict_track_mood(song['id']))
+    song = fetch_song('Happy')
+    print(song['id'])
+    # song_features = get_songs_features(song['id'])
+    print(predict_track_mood(song['id']))
 
-    playlist_songs_ids = fetch_playlist_songs('37i9dQZF1DWTJNOeepZTGy')
-    # predict_track_mood(playlist_songs_ids)
-    # Only display the mood
-    preds_mood = []
-    for track_id in playlist_songs_ids:
-        # Get the features of the track
-        track_values, columns = get_songs_features(track_id)
-
-        # Create a dictionary for the track metadata
-        track_meta = dict(zip(columns, track_values))
-
-        # Predict the mood of the track
-        predicted_mood = predict_track_mood(track_id)
-
-        # Add the predicted mood to the track metadata
-        track_meta['predicted_mood'] = predicted_mood
-
-        preds_mood.append(predicted_mood)
-
-    print(np.unique(preds_mood))
-
-    # output = [0 1 2 3]
+    # playlist_songs_ids = fetch_playlist_songs('37i9dQZF1DXcBWIGoYBM5M')
+    # print(playlist_songs_ids)
