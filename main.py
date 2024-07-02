@@ -121,7 +121,8 @@ if st.session_state.page == 'loading':
     emotion = image_emotion_recognition(st.session_state.image)
     st.session_state.emotion = emotion
     # Convert emotions to music recommendations
-    converted_output = mc.converter(emotion)
+    converted_output = mc.converter(
+        emotion, playlist_id='26xMbGyBhFCtrwAYsXefRq')  # 37i9dQZF1DX2taNm7KfjOX 37i9dQZF1DWVV27DiNWxkR
 
     st.session_state.converted_output = [
         {"name": track["name"], "artist": track["artist"],

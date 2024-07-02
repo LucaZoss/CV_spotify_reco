@@ -4,7 +4,7 @@ import pandas as pd
 
 def playlist_track_classifier(playlist_id):
     # Fetch the track IDs from the playlist
-    track_ids = utils2.fetch_playlist_songs(playlist_id, limit=20)
+    track_ids = utils2.fetch_playlist_songs(playlist_id, limit=100)
 
     # Dictionary to hold the results
     results = {}
@@ -64,5 +64,6 @@ def converter(output_of_cv_model: str, playlist_id: str = '37i9dQZF1DXcBWIGoYBM5
 
 if __name__ == '__main__':
     # Test the function
-    output = converter('happy', playlist_id='37i9dQZF1DZ06evO3M0Fbi')
+    # 37i9dQZF1DWZUozJiHy44Y #37i9dQZF1DZ06evO3M0Fbi
+    output = converter('neutral', playlist_id='26xMbGyBhFCtrwAYsXefRq')
     print(output)
