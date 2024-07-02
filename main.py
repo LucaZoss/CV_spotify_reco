@@ -10,7 +10,7 @@ import cv2
 from face_recognition import FaceRecognition
 
 # Load environment variables from .env file
-load_dotenv('.env')
+# load_dotenv('.env')
 
 # Initialize FaceRecognition model
 json_file_path = 'emotions_reco/emotiondetector.json'
@@ -28,11 +28,15 @@ if 'image' not in st.session_state:
     st.session_state.image = None
 
 # Function to reset the page
+
+
 def reset_page():
     st.session_state.page = 'home'
     st.experimental_rerun()
 
 # Function for emotion recognition
+
+
 def image_emotion_recognition(image):
     # Convert the PIL image to a numpy array
     image_np = np.array(image.convert('L'))  # Convert to grayscale
@@ -47,6 +51,7 @@ def image_emotion_recognition(image):
     except Exception as e:
         print(f"Error in emotion recognition: {e}")
         return "Error"
+
 
 # Home page
 if st.session_state.page == 'home':
@@ -78,7 +83,7 @@ if st.session_state.page == 'upload':
         image = Image.open(uploaded_file)
         st.image(image, caption='Uploaded Image.', use_column_width=True)
         st.write("Image uploaded successfully!")
-        
+
         if st.button("Analyze Emotions"):
             st.session_state.image = image
             st.session_state.page = 'loading'
@@ -115,10 +120,12 @@ if st.session_state.page == 'loading':
 
     emotion = image_emotion_recognition(st.session_state.image)
     st.session_state.emotion = emotion
-    converted_output = mc.converter(emotion)  # Convert emotions to music recommendations
+    # Convert emotions to music recommendations
+    converted_output = mc.converter(emotion)
 
     st.session_state.converted_output = [
-        {"name": track["name"], "artist": track["artist"], "preview_url": track["preview_url"]}
+        {"name": track["name"], "artist": track["artist"],
+            "preview_url": track["preview_url"]}
         for track in converted_output
     ]
     st.session_state.page = 'results'
@@ -127,7 +134,8 @@ if st.session_state.page == 'loading':
 # Results page
 if st.session_state.page == 'results':
     st.title("Emotion Analysis Results")
-    st.image(st.session_state.image, caption='Analyzed Image', use_column_width=True)
+    st.image(st.session_state.image,
+             caption='Analyzed Image', use_column_width=True)
     st.write(f"Detected Emotion: {st.session_state.emotion}")
     st.write("Recommended Songs:")
 
