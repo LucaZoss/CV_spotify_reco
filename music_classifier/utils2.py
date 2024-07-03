@@ -20,11 +20,13 @@ warnings.filterwarnings('ignore')
 base_dir = os.path.dirname(os.path.abspath(__file__))
 # Load environment variables
 env_path = os.path.join(base_dir, '.env')
-load_dotenv(env_path)
-print('Env.Variables loaded at ' + env_path)
+# load_dotenv(env_path)
+# print('Env.Variables loaded at ' + env_path)
 # Load environement for streamlit
-SPOTIFY_CLIENT_ID = st.secrets.get("OPENAI_API_KEY")
-SPOTIFY_CLIENT_SECRET = st.secrets.get("OPENAI_API_SECRET")
+# load_dotenv(env_path)
+st.write(st.secrets.load_if_toml_exists())
+SPOTIFY_CLIENT_ID = st.secrets.get("SPOTIFY_CLIENT_ID")
+SPOTIFY_CLIENT_SECRET = st.secrets.get("SPOTIFY_CLIENT_SECRET")
 
 # SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
 print(SPOTIFY_CLIENT_ID)
