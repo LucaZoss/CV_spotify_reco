@@ -44,6 +44,7 @@ The trained model's architecture and weights were saved to files (emotiondetecto
 
 
 __Production Script__
+
 Importing Required Libraries:
 
 The script begins by importing the necessary libraries, including OpenCV for real-time computer vision tasks, and Keras for loading the pre-trained model.
