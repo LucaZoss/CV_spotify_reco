@@ -1,6 +1,5 @@
 import pandas as pd
 import numpy as np
-import streamlit as st
 
 import requests
 import spotipy
@@ -22,13 +21,10 @@ base_dir = os.path.dirname(os.path.abspath(__file__))
 env_path = os.path.join(base_dir, '.env')
 load_dotenv(env_path)
 print('Env.Variables loaded at ' + env_path)
-# Load environement for streamlit
-SPOTIFY_CLIENT_ID = st.secrets.get("OPENAI_API_KEY")
-SPOTIFY_CLIENT_SECRET = st.secrets.get("OPENAI_API_SECRET")
 
-# SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
+SPOTIFY_CLIENT_ID = os.getenv('SPOTIFY_CLIENT_ID')
 print(SPOTIFY_CLIENT_ID)
-# SPOTIFY_CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
+SPOTIFY_CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
 print(SPOTIFY_CLIENT_SECRET)
 
 client_credentials_manager = SpotifyClientCredentials(
