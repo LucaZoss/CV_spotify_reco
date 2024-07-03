@@ -12,6 +12,9 @@ The core technology behind Emotion-DJ uses advanced AI to analyze facial express
 ## Technicities
 
 ### Computer Vision Task - Facial Emotion Recognition
+
+![WhatsApp Image 2024-07-03 at 21 38 51](https://github.com/LucaZoss/CV_spotify_reco/assets/61362932/b2a8bb33-ba7c-4e63-a31a-6b6de585af71)
+
 __Data Preparation__
 
 Dataset Download:
