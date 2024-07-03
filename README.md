@@ -25,24 +25,29 @@ The emotion labels were encoded into numerical values using LabelEncoder, and th
 
 __Neural Network Structure & Results__
 Model Architecture:
+
 The model was built using the Keras Sequential API. It consists of several convolutional layers followed by max-pooling and dropout layers. The number of filters increases progressively in the convolutional layers to capture hierarchical features.
 After the convolutional layers, the model includes fully connected dense layers with dropout layers in between to prevent overfitting. The final layer is a softmax layer, which is suitable for multi-class classification.
 
 Model Training:
+
 The model was trained using the training dataset, with a batch size of 128 and for 100 epochs. The Adam optimizer was used, and the loss function was categorical cross-entropy.
 During training, the model's performance was also evaluated on the validation (testing) dataset after each epoch.
 Model Accuracy:
 The training process took approximately 8 hours, resulting in an accuracy of 72%.
 
 Model Saving:
+
 The trained model's architecture and weights were saved to files (emotiondetector.json and emotiondetector.h5) for later use.
 
 
 __Production Script__
 Importing Required Libraries:
+
 The script begins by importing the necessary libraries, including OpenCV for real-time computer vision tasks, and Keras for loading the pre-trained model.
 
 FaceRecognition Class:
+
 The FaceRecognition class is created to encapsulate the functionality of loading the model, detecting faces, and predicting emotions.
 Class Initialization:
 
