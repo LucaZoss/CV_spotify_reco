@@ -23,7 +23,7 @@ env_path = os.path.join(base_dir, '.env')
 # load_dotenv(env_path)
 # print('Env.Variables loaded at ' + env_path)
 # Load environement for streamlit
-# load_dotenv(env_path)
+load_dotenv(env_path)
 st.write(st.secrets.load_if_toml_exists())
 SPOTIFY_CLIENT_ID = st.secrets.get("SPOTIFY_CLIENT_ID")
 SPOTIFY_CLIENT_SECRET = st.secrets.get("SPOTIFY_CLIENT_SECRET")
