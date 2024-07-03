@@ -24,6 +24,7 @@ Label Encoding:
 The emotion labels were encoded into numerical values using LabelEncoder, and then converted into categorical format using to_categorical from Keras.
 
 __Neural Network Structure & Results__
+
 Model Architecture:
 
 The model was built using the Keras Sequential API. It consists of several convolutional layers followed by max-pooling and dropout layers. The number of filters increases progressively in the convolutional layers to capture hierarchical features.
