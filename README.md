@@ -8,6 +8,7 @@ _(Add image)_
 
 ### Computer Vision Task - Facial Emotion Recognition
 __Data Preparation__
+
 Dataset Download:
 The dataset used for this project was downloaded from Kaggle, which contains images categorized by different emotions such as 'angry', 'happy', 'sad', etc. The dataset was extracted and stored in designated directories for training and testing.
 
