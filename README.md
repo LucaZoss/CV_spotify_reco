@@ -9,13 +9,57 @@ _(Add image)_
 ### Computer Vision Task - Facial Emotion Recognition
 _(Constantin)_
 __Data Preparation__
+Dataset Download:
+The dataset used for this project was downloaded from Kaggle, which contains images categorized by different emotions such as 'angry', 'happy', 'sad', etc. The dataset was extracted and stored in designated directories for training and testing.
 
+Creating DataFrames:
+A function was created to iterate through the image directories, collect image file paths and their corresponding labels, and store this information in Pandas DataFrames for both the training and testing datasets.
+
+Feature Extraction:
+Another function was developed to read and process the images. This function loads the images in grayscale, converts them to NumPy arrays, reshapes them to the required input shape for the model, and stores them in a list.
+
+Normalization:
+The pixel values of the images were normalized by dividing each pixel value by 255.0. This ensures that the input features are on a similar scale, which helps in improving the model's performance.
+
+Label Encoding:
+The emotion labels were encoded into numerical values using LabelEncoder, and then converted into categorical format using to_categorical from Keras.
 
 __Neural Network Structure & Results__
+Model Architecture:
+The model was built using the Keras Sequential API. It consists of several convolutional layers followed by max-pooling and dropout layers. The number of filters increases progressively in the convolutional layers to capture hierarchical features.
+After the convolutional layers, the model includes fully connected dense layers with dropout layers in between to prevent overfitting. The final layer is a softmax layer, which is suitable for multi-class classification.
 
+Model Training:
+The model was trained using the training dataset, with a batch size of 128 and for 100 epochs. The Adam optimizer was used, and the loss function was categorical cross-entropy.
+During training, the model's performance was also evaluated on the validation (testing) dataset after each epoch.
+Model Accuracy:
+The training process took approximately 8 hours, resulting in an accuracy of 72%.
+
+Model Saving:
+The trained model's architecture and weights were saved to files (emotiondetector.json and emotiondetector.h5) for later use.
 
 
 __Production Script__
+Importing Required Libraries:
+The script begins by importing the necessary libraries, including OpenCV for real-time computer vision tasks, and Keras for loading the pre-trained model.
+
+FaceRecognition Class:
+The FaceRecognition class is created to encapsulate the functionality of loading the model, detecting faces, and predicting emotions.
+Class Initialization:
+
+The __init__ method takes the file paths of the saved model architecture (json_file_path) and weights (weights_file_path).
+The model architecture is loaded from the JSON file, and the weights are loaded from the H5 file. If the weights file does not exist, a FileNotFoundError is raised.
+A pre-trained face detection model (haarcascade_frontalface_default.xml) from OpenCV is loaded to detect faces in images.
+Emotion class labels are defined as a dictionary, mapping numerical predictions to emotion names (e.g., 0: 'angry', 1: 'disgust', etc.).
+Feature Extraction Method:
+
+The extract_features method preprocesses the input image by normalizing the pixel values, expanding its dimensions to fit the model's expected input shape, and returns the processed image.
+Emotion Recognition Method:
+
+The recognize_emotion method takes a grayscale frame as input, detects faces within the frame using the loaded face cascade classifier, and initializes an empty list to store predictions.
+For each detected face, the method extracts the region of interest (ROI), resizes it to 48x48 pixels (the input size expected by the model), and preprocesses it using the extract_features method.
+The preprocessed face image is fed into the model to predict the emotion. The emotion with the highest probability is selected and added to the predictions list along with the face's bounding box coordinates.
+The method returns a list of tuples containing the bounding box coordinates and the predicted emotion label for each detected face.
 
 
 ### MLP Classification Task - DNN Classifier to label Music Mood
