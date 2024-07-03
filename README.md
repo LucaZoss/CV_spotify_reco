@@ -1,10 +1,15 @@
 # Facial Music Emotion Recommendation System
-_(Name to be changed)_
-_(Add image)_
----
-## Business Part?
+!['banner'](banner.jpeg)
+!['banner'](spotify_logo.jpeg)
 
-## Technicall Stuff
+---
+## Business Part
+
+**Emotion-DJ** is a groundbreaking app that enhances the music listening experience by recommending Spotify songs based on the user's current emotional state, detected via facial recognition technology. This app targets tech-savvy young adults who value personalized digital experiences. By automating emotion detection, Emotion-DJ offers a seamless and unique service that differentiates it from traditional music recommendation platforms which require manual mood input.
+
+The core technology behind Emotion-DJ uses advanced AI to analyze facial expressions from user-uploaded images to identify emotions like happiness, sadness, or anger. This emotional data triggers a customized playlist from Spotify, matching the user's mood with appropriate songs. The app is designed to be intuitive, ensuring ease of use for photo uploads and music browsing.
+
+## Technicities
 
 ### Computer Vision Task - Facial Emotion Recognition
 __Data Preparation__
@@ -126,13 +131,14 @@ For the `main.py`script only the `converter` function is used.
 
 ### How-to
 
-easy-way: `link-to-streamlit-app on public cloud`
+easy-way: [emotion-dj-app](https://emotion-dj.streamlit.app/)
 
 1) First git clone the repo
 
 2) Set your Spotify API credentials: client id + client secret
 
 3) Run ```streamlit run main.py``` on your terminal.
+
 
 
 
