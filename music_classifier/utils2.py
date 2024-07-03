@@ -49,13 +49,13 @@ input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
 # Load the scaler
-# Load the scaler
 scaler_path = os.path.join(base_dir, 'scaler.joblib')
 scaler = joblib.load(scaler_path)
 print('Scaler loaded successfully.')
 
 label_encoder_path = os.path.join(base_dir, 'label_encoder.joblib')
 label_encoder = joblib.load(label_encoder_path)
+
 # Def Fetch only one song
 
 
@@ -78,7 +78,7 @@ def fetch_playlist_songs(playlist_id, limit=100):
     return song_ids
 
 
-# Get Song Features
+# Get track preview URL
 def fetch_track_preview_url(track_id):
     track_info = sp.track(track_id)
     # This is the direct link to the track's 30-second preview

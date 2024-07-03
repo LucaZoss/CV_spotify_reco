@@ -28,6 +28,7 @@ print(SPOTIFY_CLIENT_ID)
 SPOTIFY_CLIENT_SECRET = os.getenv('SPOTIFY_CLIENT_SECRET')
 print(SPOTIFY_CLIENT_SECRET)
 
+# Setting up the client credentials manager
 client_credentials_manager = SpotifyClientCredentials(
     client_id=SPOTIFY_CLIENT_ID, client_secret=SPOTIFY_CLIENT_SECRET)
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
@@ -47,6 +48,7 @@ print('Scaler loaded successfully.')
 
 label_encoder_path = os.path.join(base_dir, 'label_encoder.joblib')
 label_encoder = joblib.load(label_encoder_path)
+
 # Def Fetch only one song
 
 
@@ -67,6 +69,8 @@ def fetch_playlist_songs(playlist_id, limit=100):
     for song in songs:
         song_ids.append(song['track']['id'])
     return song_ids
+
+# Get Track Preview URL
 
 
 def fetch_track_preview_url(track_id):

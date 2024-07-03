@@ -33,6 +33,7 @@ def converter(output_of_cv_model: str, playlist_id: str = '37i9dQZF1DXcBWIGoYBM5
     # Simulating the function call to a hypothetical playlist_track_classifier
     results = playlist_track_classifier(playlist_id)
 
+    # Mapping the predicted mood of the CV model to the corresponding mood index
     label_dict = {
         2: ['happy', 'surprised'],  # "Happy",
         3: ['sad', 'disgusted'],    # "Sad",
@@ -40,12 +41,13 @@ def converter(output_of_cv_model: str, playlist_id: str = '37i9dQZF1DXcBWIGoYBM5
         1: ['angry', 'fearful']     # "Energetic"
     }
 
+    # Iterate over the label_dict to find the mood index corresponding to the output of the CV model
     mood_index = None
     for key, values in label_dict.items():
         if output_of_cv_model in values:
             mood_index = key
             break
-
+    # If the mood index is found, filter the results based on the mood index
     if mood_index is not None:
         output = [{
             "id": track,
@@ -57,6 +59,7 @@ def converter(output_of_cv_model: str, playlist_id: str = '37i9dQZF1DXcBWIGoYBM5
             "predicted_mood": results[track]['predicted_mood']
         } for track in results if results[track]['predicted_mood'] == mood_index]
         return output
+    # If the mood index is not found, return a message
     else:
         print("Are you a Zombie Today?")
         return None
