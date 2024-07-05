@@ -113,6 +113,7 @@ if st.session_state.page == 'camera':
     if st.button("Back"):
         reset_page()
 
+
 # Loading page
 if st.session_state.page == 'loading':
     st.title("Analyzing Emotions...")
@@ -120,15 +121,26 @@ if st.session_state.page == 'loading':
 
     emotion = image_emotion_recognition(st.session_state.image)
     st.session_state.emotion = emotion
-    # Convert emotions to music recommendations
-    converted_output = mc.converter(
-        emotion, playlist_id='26xMbGyBhFCtrwAYsXefRq')  # 37i9dQZF1DX2taNm7KfjOX 37i9dQZF1DWVV27DiNWxkR
 
-    st.session_state.converted_output = [
-        {"name": track["name"], "artist": track["artist"],
-            "preview_url": track["preview_url"]}
-        for track in converted_output
-    ]
+    # Debugging: Print the emotion and the output of mc.converter
+    st.write(f"Detected Emotion: {emotion}")
+
+    converted_output = mc.converter(
+        emotion, playlist_id='26xMbGyBhFCtrwAYsXefRq')
+    # Debugging: Print the converter output
+    st.write(f"Converter Output: {converted_output}")
+
+    # Handle NoneType for converted_output
+    if converted_output:
+        st.session_state.converted_output = [
+            {"name": track["name"], "artist": track["artist"],
+                "preview_url": track.get("preview_url")}
+            for track in converted_output
+        ]
+    else:
+        st.session_state.converted_output = []
+        st.write("No recommendations found for the detected emotion.")
+
     st.session_state.page = 'results'
     st.experimental_rerun()
 
@@ -149,8 +161,6 @@ if st.session_state.page == 'results':
             st.write(f"Name: {song_name}")
             st.write(f"Artist: {artist_name}")
             st.audio(preview_url)
-        else:
-            pass
 
     if st.button("Back"):
         reset_page()
